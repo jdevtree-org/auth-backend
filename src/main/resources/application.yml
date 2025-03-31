@@ -24,3 +24,13 @@ management:
     web:
       exposure:
         include: "*"
+
+github:
+  base-url: https://github.com
+  api-url: https://api.github.com
+  client:
+    id: Ov23liM793LwGIDgGFhX
+    secret: ${GITHUB_CLIENT_SECRET}
+  oauth:
+    token-uri: /login/oauth/access_token
+    user-uri: /user

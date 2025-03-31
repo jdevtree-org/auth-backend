@@ -1,11 +1,12 @@
 package com.jdevtree.auth.backend.enums;
 
-public enum AuthResponseEnum {
-    SUCCESS("SUCCESS");
+public enum AuthResponseCodeEnum {
+    SUCCESS("SUCCESS"),
+    GITHUB_UNAUTHORIZED("Your GitHub request was Unauthorized");
 
     private final String message;
 
-    AuthResponseEnum(String message) {
+    AuthResponseCodeEnum(String message) {
         this.message = message;
     }
 
@@ -13,7 +14,7 @@ public enum AuthResponseEnum {
         return this.message;
     }
 
-    String getCode() {
+    public String getCode() {
         return name();
     }
 }

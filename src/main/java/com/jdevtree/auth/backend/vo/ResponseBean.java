@@ -33,4 +33,14 @@ public class ResponseBean extends ResponseEntity<Object> {
     public ResponseBean(String code, String message) {
         this(HttpStatus.OK, code, message, null);
     }
+
+    public ResponseBean(HttpStatusCode status, Map<?, ?> extra) {
+        this(
+                status,
+                (String) extra.get("error"),
+                (String) extra.get("message"),
+                null,
+                extra
+        );
+    }
 }
