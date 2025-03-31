@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
-public class ResponseBean extends ResponseEntity<Object> {
+public class ResponseBean<T> extends ResponseEntity<Object> {
 
     public ResponseBean(HttpStatusCode status, String code, String message, Object data, Object extra) {
         super(Map.of(
