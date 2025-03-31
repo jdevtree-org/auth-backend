@@ -1,4 +1,4 @@
-package com.jdevtree.auth.backend.service.github;
+package com.jdevtree.auth.backend.service.github.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

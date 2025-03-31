@@ -25,7 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/oauth/github")
-    public ResponseBean<AuthResponse> githubLogin(@Valid @RequestBody AuthRequest request) {
+    public ResponseBean githubLogin(@Valid @RequestBody AuthRequest request) {
+        System.out.println("Logging in with Github");
         AuthResultDto result = authService.loginWithGithub(request.getCode(), request.getRedirectUrl());
 
         UserDto user = result.getUser();
@@ -45,6 +46,6 @@ public class AuthController {
                 .user(userView)
                 .build();
 
-        return new ResponseBean<>(AuthResponseCodeEnum.SUCCESS.name(), AuthResponseCodeEnum.SUCCESS.getMessage(), response);
+        return new ResponseBean(AuthResponseCodeEnum.SUCCESS.name(), AuthResponseCodeEnum.SUCCESS.getMessage(), response);
     }
 }

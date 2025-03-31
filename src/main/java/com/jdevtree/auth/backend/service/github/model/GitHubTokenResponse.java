@@ -1,4 +1,4 @@
-package com.jdevtree.auth.backend.service.github;
+package com.jdevtree.auth.backend.service.github.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,10 +8,10 @@ import lombok.Data;
 public class GitHubTokenResponse {
 
     @JsonProperty
-    private String accessToken;
+    private String access_token;
 
     @JsonProperty
-    private String tokenType;
+    private String token_type;
 
     private String scope;
 }

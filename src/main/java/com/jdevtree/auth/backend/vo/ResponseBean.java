@@ -5,17 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class ResponseBean<T> extends ResponseEntity<Object> {
+public class ResponseBean extends ResponseEntity<Object> {
 
     public ResponseBean(HttpStatusCode status, String code, String message, Object data, Object extra) {
-        super(Map.of(
-                "code", code,
-                "message", message,
-                "data", data,
-                "extra", extra
-        ),status);
+        super(buildBody(code, message, data, extra), status);
     }
 
     public ResponseBean(HttpStatusCode status, String code, String message, Object data) {
@@ -37,10 +33,19 @@ public class ResponseBean<T> extends ResponseEntity<Object> {
     public ResponseBean(HttpStatusCode status, Map<?, ?> extra) {
         this(
                 status,
-                (String) extra.get("error"),
-                (String) extra.get("message"),
+                extra.get("error") != null ? extra.get("error").toString() : null,
+                extra.get("message") != null ? extra.get("message").toString() : null,
                 null,
                 extra
         );
+    }
+
+    private static Map<String, Object> buildBody(String code, String message, Object data, Object extra) {
+        Map<String, Object> map = new HashMap<>();
+        if (code != null) map.put("code", code);
+        if (message != null) map.put("message", message);
+        if (data != null) map.put("data", data);
+        if (extra != null) map.put("extra", extra);
+        return map;
     }
 }
