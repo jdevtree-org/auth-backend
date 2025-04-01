@@ -13,12 +13,14 @@ import com.jdevtree.auth.backend.service.RefreshTokenService;
 import com.jdevtree.auth.backend.service.github.service.GitHubOAuthService;
 import com.jdevtree.auth.backend.service.github.model.GitHubUserResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final GitHubOAuthService gitHubOAuthService;
@@ -67,6 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
         // Step 6: Generate Refresh tokens
         String refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        log.info("🧠 [DEBUG] Refresh token stored in Redis: {}", refreshToken);
 
         // Step 7: Build dto
         return AuthResultDto.builder()
@@ -79,19 +82,26 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResultDto refreshToken(String refreshToken) {
+        // Step 1: Verify refresh token in Redis
         UUID userId = refreshTokenService.verifyRefreshToken(refreshToken);
 
+        // Step 2: Load user from DB (in case account is deactivated or deleted)
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new OAuthAuthenticationException("User not found"));
 
-        // Invalidate old token
+        // Step 3: Invalidate the old refresh token (remove from Redis)
         refreshTokenService.invalidateRefreshToken(refreshToken);
 
-        // Convert to UserDto
+        // Step 4: Create UserDto
         UserDto userDto = UserDto.from(user);
+
+        // Step 5: Generate new JWT access token
         String newAccessToken = jwtTokenService.generateToken(userDto);
+
+        // Step 6: Generate a new refresh token and store in Redis
         String newRefreshToken = refreshTokenService.createRefreshToken(userId);
 
+        // Step 7: Return result
         return AuthResultDto.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)

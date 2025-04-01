@@ -53,8 +53,16 @@ dependencies {
 
 	// Temporary for H2 DB support
 	runtimeOnly 'com.h2database:h2'
+
+	// Redis
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('processResources') {
+	from rootProject.file("logback-spring.xml")
 }
