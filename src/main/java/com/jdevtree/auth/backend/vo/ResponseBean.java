@@ -1,6 +1,7 @@
 package com.jdevtree.auth.backend.vo;
 
 
+import com.jdevtree.auth.backend.enums.AuthResponseCodeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +48,13 @@ public class ResponseBean extends ResponseEntity<Object> {
         if (data != null) map.put("data", data);
         if (extra != null) map.put("extra", extra);
         return map;
+    }
+
+    public static ResponseBean success() {
+        return new ResponseBean(AuthResponseCodeEnum.SUCCESS.getCode(), AuthResponseCodeEnum.SUCCESS.getMessage());
+    }
+
+    public static ResponseBean success(Object data) {
+        return new ResponseBean(AuthResponseCodeEnum.SUCCESS.getCode(), AuthResponseCodeEnum.SUCCESS.getMessage(), data);
     }
 }

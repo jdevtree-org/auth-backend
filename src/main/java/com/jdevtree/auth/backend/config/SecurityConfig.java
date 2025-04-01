@@ -17,7 +17,9 @@ public class SecurityConfig {
                                 "/auth/health",
                                 "/auth/oauth/github",
                                 "/auth/account/login",
-                                "/auth/token/refresh"
+                                "/auth/token/refresh",
+                                "auth/test/refresh",
+                                "/auth/test/invalidate"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );

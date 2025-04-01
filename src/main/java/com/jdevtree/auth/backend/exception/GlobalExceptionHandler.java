@@ -12,14 +12,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(OAuthAuthenticationException.class)
-    public ResponseBean oauthAuthenticationExceptionHandler(OAuthAuthenticationException ex) {
-        return new ResponseBean(HttpStatus.UNAUTHORIZED, ex.code, ex.getMessage(), null);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseBean exceptionHandler(Exception ex) {
-        return new ResponseBean(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage(), null);
-    }
+//    @ExceptionHandler(OAuthAuthenticationException.class)
+//    public ResponseBean oauthAuthenticationExceptionHandler(OAuthAuthenticationException ex) {
+//        return new ResponseBean(HttpStatus.UNAUTHORIZED, ex.code, ex.getMessage(), null);
+//    }
+//
+//    @ExceptionHandler(InvalidRefreshTokenException.class)
+//    public ResponseBean invalidRefreshTokenException(InvalidRefreshTokenException ex) {
+//        System.out.println("Hi");
+//        return new ResponseBean(HttpStatus.FORBIDDEN, ex.code, ex.getMessage(), null);
+//    }
+//
+//    @ExceptionHandler(Exception.class)
+//    public ResponseBean exceptionHandler(Exception ex) {
+//        return new ResponseBean(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString(), ex.getMessage(), null);
+//    }
 
 }

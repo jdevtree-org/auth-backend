@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +20,8 @@ import java.time.Instant;
 public class User {
 
     @Id
-    private String id; // UUID string
+    @Column(nullable = false, updatable = false)
+    private UUID id; // UUID string
 
     @Column(unique = true)
     private String email;

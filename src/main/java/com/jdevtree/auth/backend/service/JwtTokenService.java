@@ -10,4 +10,6 @@ public interface JwtTokenService {
     UserDto extractUser(String token);
 
     long getExpirationTime();
+
+    int getAccessTokenExpirySeconds();
 }

@@ -9,6 +9,7 @@ import com.jdevtree.auth.backend.exception.OAuthAuthenticationException;
 import com.jdevtree.auth.backend.repository.UserRepository;
 import com.jdevtree.auth.backend.service.AuthService;
 import com.jdevtree.auth.backend.service.JwtTokenService;
+import com.jdevtree.auth.backend.service.RefreshTokenService;
 import com.jdevtree.auth.backend.service.github.service.GitHubOAuthService;
 import com.jdevtree.auth.backend.service.github.model.GitHubUserResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class AuthServiceImpl implements AuthService {
     private final GitHubOAuthService gitHubOAuthService;
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public AuthResultDto loginWithGithub(String code, String redirectUri) {
@@ -36,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
                 .or(() -> userRepository.findByEmail(githubUser.getEmail()))
                 .orElseGet(() -> {
                     User newUser = User.builder()
-                            .id(UUID.randomUUID().toString())
+                            .id(UUID.randomUUID())
                             .email(githubUser.getEmail())
                             .name(githubUser.getName())
                             .avatar(githubUser.getAvatarUrl())
@@ -63,13 +65,39 @@ public class AuthServiceImpl implements AuthService {
         // Step 5: Generate JWT
         String jwt = jwtTokenService.generateToken(userDto);
 
-        // Step 6: Build dto
+        // Step 6: Generate Refresh tokens
+        String refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+        // Step 7: Build dto
         return AuthResultDto.builder()
                 .accessToken(jwt)
-                .refreshToken(null) // TODO
+                .refreshToken(refreshToken) // TODO
                 .expiresIn(900)
                 .user(userDto)
                 .build();
-
     }
+
+    @Override
+    public AuthResultDto refreshToken(String refreshToken) {
+        UUID userId = refreshTokenService.verifyRefreshToken(refreshToken);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new OAuthAuthenticationException("User not found"));
+
+        // Invalidate old token
+        refreshTokenService.invalidateRefreshToken(refreshToken);
+
+        // Convert to UserDto
+        UserDto userDto = UserDto.from(user);
+        String newAccessToken = jwtTokenService.generateToken(userDto);
+        String newRefreshToken = refreshTokenService.createRefreshToken(userId);
+
+        return AuthResultDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .expiresIn(jwtTokenService.getAccessTokenExpirySeconds())
+                .user(userDto)
+                .build();
+    }
+
 }

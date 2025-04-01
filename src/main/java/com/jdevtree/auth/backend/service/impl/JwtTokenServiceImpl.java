@@ -15,12 +15,16 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class JwtTokenServiceImpl implements JwtTokenService {
     private final SecretKey secretKey;
     private final long expiration;
+
+    @Value("${jwt.expiration}")
+    private int jwtExpirationSeconds;
 
     public JwtTokenServiceImpl(@Value("${jwt.secret}") String secret,
                                @Value("${jwt.expiration}") long expiration) {
@@ -33,7 +37,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     public String generateToken(UserDto user) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .setSubject(user.getId())
+                .setSubject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("provider", user.getProvider().name())
                 .setIssuedAt(Date.from(now))
@@ -65,10 +69,14 @@ public class JwtTokenServiceImpl implements JwtTokenService {
                 .getBody();
 
         return UserDto.builder()
-                .id(claims.getSubject())
+                .id(UUID.fromString(claims.getSubject()))
                 .email(claims.get("email", String.class))
                 .provider(AuthProviderEnum.valueOf(claims.get("provider", String.class)))
                 .build();
+    }
+
+    public int getAccessTokenExpirySeconds() {
+        return jwtExpirationSeconds;
     }
 
     @Override
