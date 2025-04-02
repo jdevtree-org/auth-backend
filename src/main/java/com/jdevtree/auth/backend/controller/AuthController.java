@@ -3,6 +3,7 @@ package com.jdevtree.auth.backend.controller;
 import com.jdevtree.auth.backend.api.common.UserView;
 import com.jdevtree.auth.backend.api.request.AuthRequest;
 import com.jdevtree.auth.backend.api.request.RefreshRequest;
+import com.jdevtree.auth.backend.api.request.RefreshTokenRequest;
 import com.jdevtree.auth.backend.api.response.AuthResponse;
 import com.jdevtree.auth.backend.dto.AuthResultDto;
 import com.jdevtree.auth.backend.dto.UserDto;
@@ -12,6 +13,8 @@ import com.jdevtree.auth.backend.service.RefreshTokenService;
 import com.jdevtree.auth.backend.vo.ResponseBean;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -78,6 +81,13 @@ public class AuthController {
 
         return ResponseBean.success(response);
     }
+
+    @PostMapping("/logout")
+    public ResponseBean logout(@RequestBody RefreshTokenRequest request, @AuthenticationPrincipal JwtAuthenticationToken auth) {
+        authService.logout(request.getRefreshToken(), auth.getName());
+        return ResponseBean.success();
+    }
+
 
     @PostMapping("/test/refresh")
     public ResponseBean testGenerateRefreshToken(@RequestBody Map<String, String> request) {

@@ -110,4 +110,10 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Override
+    public void logout(String refreshToken, String userId) {
+        refreshTokenService.invalidateRefreshToken(refreshToken);
+        log.info("User {} logged out", userId);
+    }
+
 }
